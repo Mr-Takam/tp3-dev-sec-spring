@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class})
+@SpringBootApplication
 @ComponentScan(basePackages = {"fr.efrei.tp3_dev_sec_spring", "fr.efrei.tp3_dev_sec_spring.api.rest", "fr.efrei.tp3_dev_sec_spring.security"})
 public class Tp3DevSecSpringApplication {
 
