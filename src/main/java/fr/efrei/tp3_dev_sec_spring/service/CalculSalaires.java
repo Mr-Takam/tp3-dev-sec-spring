@@ -17,7 +17,7 @@ public class CalculSalaires {
         salaires.put("pdg", 15000.0); 
     }
 
-    // On utilise #nom car c'est le nom du paramètre ci-dessous
+    // On utilise #nom car c'est le nom du paramètre
     @PreAuthorize("hasRole('ADMIN') or #nom == authentication.name")
     @PostAuthorize("hasRole('USER') or (hasRole('ADMIN') and returnObject <= 10000)")
     public double getSalaire(String nom) {

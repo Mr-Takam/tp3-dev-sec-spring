@@ -25,8 +25,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EntityScan("fr.efrei.tp3_dev_sec_spring.security.entities") // Étape 37
-@EnableJpaRepositories("fr.efrei.tp3_dev_sec_spring.security.repository") // Étape 39
+@EntityScan(basePackages = {
+    "fr.efrei.tp3_dev_sec_spring.security.entities",
+    "fr.efrei.tp3_dev_sec_spring.banque.entities"
+})
+@EnableJpaRepositories(basePackages = {
+    "fr.efrei.tp3_dev_sec_spring.security.repository",
+    "fr.efrei.tp3_dev_sec_spring.banque.repository"
+})
 public class SecuConfig {
 
     @Bean // Étape 34
@@ -50,22 +56,22 @@ public class SecuConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // Désactive la protection CSRF pour permettre les requêtes POST via curl/Postman
+            .csrf(csrf -> csrf.disable()) 
+            
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/public").permitAll()
+                .requestMatchers("/error").permitAll()
                 
-                // On autorise l'accès HTTP aux salaires pour tout utilisateur authentifié
-                // La sécurité fine (qui voit quoi) sera gérée par @PreAuthorize dans le service
-                .requestMatchers("/protege/salaire/**").authenticated() 
+                // Accès autorisé à tout utilisateur authentifié
+                // Les règles fines (1000€, propriété) sont dans BanqueService
+                .requestMatchers("/banque/**").authenticated() 
 
-                .requestMatchers("/protege/user").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/protege/user").hasAnyRole("USER", "ADMIN", "CLIENT")
                 .requestMatchers("/protege/admin").hasRole("ADMIN")
                 
-                // Optionnel mais recommandé : autoriser la page d'erreur pour voir les messages
-                .requestMatchers("/error").permitAll() 
-
                 .anyRequest().denyAll() 
             )
-            // Étape 23 : Ajout des filtres d'authentification
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
 
