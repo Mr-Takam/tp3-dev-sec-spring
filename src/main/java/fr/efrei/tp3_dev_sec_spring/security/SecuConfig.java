@@ -10,19 +10,24 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecuConfig {
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                // La ressource /public est accessible à tous (étape 21)
+                // Étape 21 : Public reste public
                 .requestMatchers("/public").permitAll()
-                // La ressource /protege/** nécessite une authentification (étape 21)
-                .requestMatchers("/protege/**").authenticated()
-                // Par défaut, on demande l'authentification pour le reste (sécurité max)
-                .anyRequest().authenticated()
+                
+                // Étape 22 : Restriction par rôles
+                // /protege/user accessible par USER ou ADMIN
+                .requestMatchers("/protege/user").hasAnyRole("USER", "ADMIN")
+                
+                // /protege/admin accessible uniquement par ADMIN
+                .requestMatchers("/protege/admin").hasRole("ADMIN")
+                
+                // Toute autre ressource est inaccessible (étape 22)
+                .anyRequest().denyAll() 
             )
-            // Activation du formulaire de login (étape 13) et Basic Auth (étape 14)
+            // Étape 23 : Ajout des filtres d'authentification
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
 
