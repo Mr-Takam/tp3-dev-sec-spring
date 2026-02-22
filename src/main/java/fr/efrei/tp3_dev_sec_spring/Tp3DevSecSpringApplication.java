@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
     "fr.efrei.tp3_dev_sec_spring", 
     "fr.efrei.tp3_dev_sec_spring.api.rest", 
     "fr.efrei.tp3_dev_sec_spring.security",
-    "fr.efrei.tp3_dev_sec_spring.init" 
+    "fr.efrei.tp3_dev_sec_spring.init",
+    "fr.efrei.tp3_dev_sec_spring.banque"
 })
 public class Tp3DevSecSpringApplication {
 

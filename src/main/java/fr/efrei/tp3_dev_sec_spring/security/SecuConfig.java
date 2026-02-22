@@ -25,8 +25,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EntityScan("fr.efrei.tp3_dev_sec_spring.security.entities") // Étape 37
-@EnableJpaRepositories("fr.efrei.tp3_dev_sec_spring.security.repository") // Étape 39
+@EntityScan(basePackages = {
+    "fr.efrei.tp3_dev_sec_spring.security.entities",
+    "fr.efrei.tp3_dev_sec_spring.banque.entities"
+})
+@EnableJpaRepositories(basePackages = {
+    "fr.efrei.tp3_dev_sec_spring.security.repository",
+    "fr.efrei.tp3_dev_sec_spring.banque.repository"
+})
 public class SecuConfig {
 
     @Bean // Étape 34

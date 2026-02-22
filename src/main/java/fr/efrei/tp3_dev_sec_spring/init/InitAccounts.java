@@ -1,42 +1,63 @@
 package fr.efrei.tp3_dev_sec_spring.init;
 
+import fr.efrei.tp3_dev_sec_spring.banque.entities.CompteBancaire;
+import fr.efrei.tp3_dev_sec_spring.banque.repository.ICompteBancaireRepository;
 import fr.efrei.tp3_dev_sec_spring.security.entities.UserAccounts;
 import fr.efrei.tp3_dev_sec_spring.security.repository.IUserAccountsRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component // Étape 42
+@Component
 public class InitAccounts implements CommandLineRunner {
 
-    private final IUserAccountsRepository repository;
+    private final IUserAccountsRepository userRepository;
+    private final ICompteBancaireRepository compteRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Injection par constructeur
-    public InitAccounts(IUserAccountsRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
+    // L'injection se fait automatiquement par le constructeur
+    public InitAccounts(IUserAccountsRepository userRepository, 
+                        ICompteBancaireRepository compteRepository, 
+                        PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.compteRepository = compteRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        // On nettoie la base au démarrage (optionnel pour les tests)
-        repository.deleteAll();
+        // 1. Nettoyage des tables (ordre important à cause des liens logiques)
+        compteRepository.deleteAll();
+        userRepository.deleteAll();
 
-        // Création du compte USER
-        UserAccounts user = new UserAccounts();
-        user.setLogin("toto");
-        user.setPassword(passwordEncoder.encode("12345")); // Hachage dynamique !
-        user.setRoles("USER");
-        repository.save(user);
+        // 2. Création des utilisateurs (Rôles adaptés au projet : CLIENT et ADMIN)
+        UserAccounts client = new UserAccounts();
+        client.setLogin("toto");
+        client.setPassword(passwordEncoder.encode("12345"));
+        client.setRoles("CLIENT"); // Changé de USER à CLIENT pour le projet
+        userRepository.save(client);
 
-        // Création du compte ADMIN
-        UserAccounts admin = new UserAccounts();
-        admin.setLogin("tintin");
-        admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setRoles("ADMIN");
-        repository.save(admin);
+        UserAccounts conseiller = new UserAccounts();
+        conseiller.setLogin("tintin");
+        conseiller.setPassword(passwordEncoder.encode("admin123"));
+        conseiller.setRoles("ADMIN");
+        userRepository.save(conseiller);
 
-        System.out.println(">>> Base de données initialisée avec toto (USER) et tintin (ADMIN)");
+        // 3. Création de comptes bancaires de test
+        CompteBancaire c1 = new CompteBancaire();
+        c1.setNumeroCompte("CB-TOTO-01");
+        c1.setSolde(500.0);
+        c1.setProprietaireLogin("toto");
+        compteRepository.save(c1);
+
+        CompteBancaire c2 = new CompteBancaire();
+        c2.setNumeroCompte("CB-TINTIN-01");
+        c2.setSolde(10000.0);
+        c2.setProprietaireLogin("tintin");
+        compteRepository.save(c2);
+
+        System.out.println(">>> Base de données initialisée :");
+        System.out.println(">>> Utilisateurs : toto (CLIENT), tintin (ADMIN)");
+        System.out.println(">>> Comptes créés : CB-TOTO-01 (500€), CB-TINTIN-01 (10000€)");
     }
 }
