@@ -13,6 +13,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @EntityScan("fr.efrei.tp3_dev_sec_spring.security.entities") // Étape 37
 @EnableJpaRepositories("fr.efrei.tp3_dev_sec_spring.security.repository") // Étape 39
 public class SecuConfig {
@@ -49,17 +51,18 @@ public class SecuConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                // Étape 21 : Public reste public
                 .requestMatchers("/public").permitAll()
                 
-                // Étape 22 : Restriction par rôles
-                // /protege/user accessible par USER ou ADMIN
+                // On autorise l'accès HTTP aux salaires pour tout utilisateur authentifié
+                // La sécurité fine (qui voit quoi) sera gérée par @PreAuthorize dans le service
+                .requestMatchers("/protege/salaire/**").authenticated() 
+
                 .requestMatchers("/protege/user").hasAnyRole("USER", "ADMIN")
-                
-                // /protege/admin accessible uniquement par ADMIN
                 .requestMatchers("/protege/admin").hasRole("ADMIN")
                 
-                // Toute autre ressource est inaccessible (étape 22)
+                // Optionnel mais recommandé : autoriser la page d'erreur pour voir les messages
+                .requestMatchers("/error").permitAll() 
+
                 .anyRequest().denyAll() 
             )
             // Étape 23 : Ajout des filtres d'authentification
