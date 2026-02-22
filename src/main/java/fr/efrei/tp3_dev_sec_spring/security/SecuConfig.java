@@ -5,6 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -38,21 +41,26 @@ public class SecuConfig {
 
         return http.build();
     }
-    
+
     @Bean
     public UserDetailsService userDetailsService() {
-        // Création de l'utilisateur Toto avec le rôle USER
+        PasswordEncoder encoder = passwordEncoder();
+
         UserDetails user1 = User.withUsername("toto")
-                .password("{noop}12345") // {noop} car pas encore d'encodeur (étape 27)
+                .password(encoder.encode("12345")) // Hachage dynamique au démarrage
                 .roles("USER")
                 .build();
 
-        // Création de l'utilisateur Tintin avec le rôle ADMIN
         UserDetails user2 = User.withUsername("tintin")
-                .password("{noop}admin123")
+                .password(encoder.encode("admin123"))
                 .roles("ADMIN")
                 .build();
 
         return new InMemoryUserDetailsManager(user1, user2);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
