@@ -1,8 +1,8 @@
 # Projet : Banque Simplifiée - Architecture et Sécurité (Spring Boot)
 
-**Module :** Développement sécurisé (DevSec) - INGE-3-APP-LSI 
-**Binôme :** Cyril Takam & Abdou Khadre DIOP
-**Date de rendu :** 24 février 2026 
+* **Module :** Développement sécurisé (DevSec) - INGE-3-APP-LSI 
+* **Binôme :** Cyril Takam & Abdou Khadre DIOP
+* **Date de rendu :** 24 février 2026 
 
 <br>
 
