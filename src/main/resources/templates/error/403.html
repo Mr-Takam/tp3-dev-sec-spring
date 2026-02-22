@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Accès Refusé</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin-top: 50px; background-color: #fce4e4; }
+        .error-box { display: inline-block; padding: 20px; border: 2px solid #e74c3c; border-radius: 8px; background: white; }
+        h1 { color: #e74c3c; }
+        a { color: #3498db; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <h1>🚫 Accès Refusé (Erreur 403)</h1>
+        <p>Désolé, vous n'avez pas les privilèges nécessaires pour accéder à cette ressource ou effectuer cette opération.</p>
+        <p>Règles de sécurité : Les plafonds de 1000 € et la propriété des comptes sont strictement contrôlés.</p>
+        <br>
+        <a href="/banque/dashboard">Retour au Tableau de Bord</a>
+    </div>
+</body>
+</html>

@@ -1,8 +1,7 @@
 package fr.efrei.tp3_dev_sec_spring.api.rest;
 
-import fr.efrei.tp3_dev_sec_spring.banque.entities.CompteBancaire; // Import crucial
+import fr.efrei.tp3_dev_sec_spring.banque.entities.CompteBancaire;
 import fr.efrei.tp3_dev_sec_spring.service.BanqueService;
-import fr.efrei.tp3_dev_sec_spring.service.CalculSalaires;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,29 +9,11 @@ import org.springframework.web.bind.annotation.*;
 public class RestSimple {
 
     @Autowired
-    private CalculSalaires calculSalaires;
-
-    @Autowired
     private BanqueService banqueService;
 
     @GetMapping("/public")
     public String ressourcePublique() {
         return "ressources publique accessible à tous";
-    }
-
-    @GetMapping("/protege/user")
-    public String ressourceUtilisateurs() {
-        return "page privée réservée aux utilisateurs";
-    }
-
-    @GetMapping("/protege/admin")
-    public String ressourceAdministrateurs() {
-        return "page privée réservée aux administrateurs";
-    }
-
-    @GetMapping("/protege/salaire/{nom}")
-    public double ressourceSalaire(@PathVariable String nom) {
-        return calculSalaires.getSalaire(nom);
     }
 
     // --- Endpoints pour la Banque Simplifiée ---
@@ -46,5 +27,11 @@ public class RestSimple {
     public String faireOperation(@RequestParam String id, @RequestParam double montant) {
         banqueService.faireOperation(id, montant);
         return "Opération effectuée. Nouveau solde : " + banqueService.consulterCompte(id).getSolde();
+    }
+
+    // AJOUT ÉTAPE SUIVANTE : Endpoint de création
+    @PostMapping("/banque/creer")
+    public CompteBancaire creerCompte(@RequestParam String id, @RequestParam String login) {
+        return banqueService.creerCompte(id, login);
     }
 }

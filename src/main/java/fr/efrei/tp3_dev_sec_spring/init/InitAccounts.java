@@ -15,7 +15,6 @@ public class InitAccounts implements CommandLineRunner {
     private final ICompteBancaireRepository compteRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // L'injection se fait automatiquement par le constructeur
     public InitAccounts(IUserAccountsRepository userRepository, 
                         ICompteBancaireRepository compteRepository, 
                         PasswordEncoder passwordEncoder) {
@@ -26,38 +25,46 @@ public class InitAccounts implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Nettoyage des tables (ordre important à cause des liens logiques)
+        // Nettoyage des tables
         compteRepository.deleteAll();
         userRepository.deleteAll();
 
-        // 2. Création des utilisateurs (Rôles adaptés au projet : CLIENT et ADMIN)
-        UserAccounts client = new UserAccounts();
-        client.setLogin("toto");
-        client.setPassword(passwordEncoder.encode("12345"));
-        client.setRoles("CLIENT"); // Changé de USER à CLIENT pour le projet
-        userRepository.save(client);
-
+        // 1. Création des personnels de la banque (ADMIN)
         UserAccounts conseiller = new UserAccounts();
-        conseiller.setLogin("tintin");
-        conseiller.setPassword(passwordEncoder.encode("admin123"));
+        conseiller.setLogin("m.leclerc");
+        conseiller.setPassword(passwordEncoder.encode("Conseiller2024!"));
         conseiller.setRoles("ADMIN");
         userRepository.save(conseiller);
 
-        // 3. Création de comptes bancaires de test
-        CompteBancaire c1 = new CompteBancaire();
-        c1.setNumeroCompte("CB-TOTO-01");
-        c1.setSolde(500.0);
-        c1.setProprietaireLogin("toto");
-        compteRepository.save(c1);
+        // 2. Création des clients (CLIENT)
+        UserAccounts client1 = new UserAccounts();
+        client1.setLogin("j.dupont");
+        client1.setPassword(passwordEncoder.encode("ClientSecure123*"));
+        client1.setRoles("CLIENT");
+        userRepository.save(client1);
 
-        CompteBancaire c2 = new CompteBancaire();
-        c2.setNumeroCompte("CB-TINTIN-01");
-        c2.setSolde(10000.0);
-        c2.setProprietaireLogin("tintin");
-        compteRepository.save(c2);
+        UserAccounts client2 = new UserAccounts();
+        client2.setLogin("a.martin");
+        client2.setPassword(passwordEncoder.encode("MartinPass789#"));
+        client2.setRoles("CLIENT");
+        userRepository.save(client2);
 
-        System.out.println(">>> Base de données initialisée :");
-        System.out.println(">>> Utilisateurs : toto (CLIENT), tintin (ADMIN)");
-        System.out.println(">>> Comptes créés : CB-TOTO-01 (500€), CB-TINTIN-01 (10000€)");
+        // 3. Création des comptes bancaires associés
+        // Compte de Jean Dupont (1500€ initial)
+        CompteBancaire cpteDupont = new CompteBancaire();
+        cpteDupont.setNumeroCompte("FR76-DUPONT-2024-001");
+        cpteDupont.setSolde(1500.0);
+        cpteDupont.setProprietaireLogin("j.dupont");
+        compteRepository.save(cpteDupont);
+
+        // Compte d'Alice Martin (450€ initial)
+        CompteBancaire cpteMartin = new CompteBancaire();
+        cpteMartin.setNumeroCompte("FR76-MARTIN-2024-002");
+        cpteMartin.setSolde(450.0);
+        cpteMartin.setProprietaireLogin("a.martin");
+        compteRepository.save(cpteMartin);
+
+        System.out.println(">>> Base de données initialisée avec des données professionnelles.");
+        System.out.println(">>> Conseiller : m.leclerc | Clients : j.dupont, a.martin");
     }
 }

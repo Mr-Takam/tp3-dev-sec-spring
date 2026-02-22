@@ -56,23 +56,25 @@ public class SecuConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Désactive la protection CSRF pour permettre les requêtes POST via curl/Postman
-            .csrf(csrf -> csrf.disable()) 
+            // Activation du CSRF pour Thymeleaf
+            .csrf(Customizer.withDefaults()) 
             
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/public").permitAll()
-                .requestMatchers("/error").permitAll()
+                // 1. Ressources publiques
+                .requestMatchers("/public", "/error", "/login", "/css/**", "/js/**").permitAll() 
                 
-                // Accès autorisé à tout utilisateur authentifié
-                // Les règles fines (1000€, propriété) sont dans BanqueService
+                // 2. Toutes les routes de la banque sont protégées
+                // La sécurité fine est gérée dans BanqueService
                 .requestMatchers("/banque/**").authenticated() 
 
-                .requestMatchers("/protege/user").hasAnyRole("USER", "ADMIN", "CLIENT")
-                .requestMatchers("/protege/admin").hasRole("ADMIN")
-                
+                // 3. On refuse tout le reste (Sécurité maximale)
                 .anyRequest().denyAll() 
             )
-            .formLogin(Customizer.withDefaults())
+            .formLogin(form -> form
+                .defaultSuccessUrl("/banque/dashboard", true) 
+                .permitAll()
+            )
+            .logout(logout -> logout.permitAll())
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
