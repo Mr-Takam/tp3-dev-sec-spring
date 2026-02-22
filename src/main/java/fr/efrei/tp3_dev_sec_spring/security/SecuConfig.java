@@ -1,5 +1,10 @@
 package fr.efrei.tp3_dev_sec_spring.security;
 
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -32,5 +37,22 @@ public class SecuConfig {
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
+    }
+    
+    @Bean
+    public UserDetailsService userDetailsService() {
+        // Création de l'utilisateur Toto avec le rôle USER
+        UserDetails user1 = User.withUsername("toto")
+                .password("{noop}12345") // {noop} car pas encore d'encodeur (étape 27)
+                .roles("USER")
+                .build();
+
+        // Création de l'utilisateur Tintin avec le rôle ADMIN
+        UserDetails user2 = User.withUsername("tintin")
+                .password("{noop}admin123")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user1, user2);
     }
 }
